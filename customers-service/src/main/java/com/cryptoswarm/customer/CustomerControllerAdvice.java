@@ -6,12 +6,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,7 +21,9 @@ public class CustomerControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ProblemDetailResponse> handleValidationExceptions(MethodArgumentNotValidException ex,
                                                                              HttpServletRequest request) {
-        Map<String, String> errors = ex.getBindingResult().getFieldErrors().stream()
+        Map<String, String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
                 .collect(Collectors.toMap(FieldError::getField,
                         FieldError::getDefaultMessage,
                         (existing, replacement) -> existing,
@@ -56,5 +57,21 @@ public class CustomerControllerAdvice {
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problem);
+    }
+
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<ProblemDetailResponse> handleResourceExistException(EntityExistsException ex,
+                                                                          HttpServletRequest request) {
+        ProblemDetailResponse problem = new ProblemDetailResponse(
+                "https://example.com/problems/conflict",
+                "Invalid request body",
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                request.getRequestURI(),
+                OffsetDateTime.now().toString(),
+                Map.of()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
     }
 }
