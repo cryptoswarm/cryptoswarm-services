@@ -1,5 +1,6 @@
 package com.cryptoswarm.customer;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -8,8 +9,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.persistence.EntityExistsException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.persistence.EntityExistsException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -73,5 +74,21 @@ public class CustomerControllerAdvice {
         );
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ProblemDetailResponse> handleResourceNotFoundException(EntityNotFoundException ex,
+                                                                              HttpServletRequest request) {
+        ProblemDetailResponse problem = new ProblemDetailResponse(
+                "https://example.com/problems/NotFound",
+                "Resource not found",
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                request.getRequestURI(),
+                OffsetDateTime.now().toString(),
+                Map.of()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
     }
 }

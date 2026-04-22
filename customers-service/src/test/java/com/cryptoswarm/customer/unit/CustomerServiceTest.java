@@ -1,4 +1,4 @@
-package com.cyptoswarm.customer.unit;
+package com.cryptoswarm.customer.unit;
 
 import com.cryptoswarm.customer.Customer;
 import com.cryptoswarm.customer.CustomerRegistrationRequest;
@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.persistence.EntityExistsException;
+import jakarta.persistence.EntityExistsException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

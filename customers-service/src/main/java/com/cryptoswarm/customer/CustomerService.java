@@ -1,9 +1,10 @@
 package com.cryptoswarm.customer;
 
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityExistsException;
 
 
 @Service
@@ -27,6 +28,20 @@ public record CustomerService(CustomerRepository customerRepository) {
 
         return new CustomerRegistrationResponse(
                 createdCustomer.getFirstName(), createdCustomer.getLastName(), createdCustomer.getEmail()
+        );
+    }
+
+    public CustomerRegistrationResponse retrieve(String email) {
+        var existingCustomer = customerRepository.findByEmail(email);
+        if(existingCustomer.isEmpty()){
+            log.error("Customer by email {} not found", email);
+            throw new EntityNotFoundException("Customer with email " + email+ "does not exist");
+        }
+
+        Customer customer = existingCustomer.get();
+
+        return new CustomerRegistrationResponse(
+                customer.getFirstName(), customer.getLastName(), customer.getEmail()
         );
     }
 }
