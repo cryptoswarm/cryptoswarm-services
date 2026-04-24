@@ -1,10 +1,11 @@
 name: Build and Test
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-
+    pull_request:
+      types: [ opened, synchronize, reopened ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -21,3 +24,11 @@ jobs:
 
       - name: Build and test
         run: mvn test --no-transfer-progress
+
+      - name: SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn sonar:sonar --no-transfer-progress
+          -Dsonar.projectKey=cryptoswarm_cryptoswarm-services
+          -Dsonar.organization=cryptoswarm
+          -Dsonar.host.url=https://sonarcloud.io
