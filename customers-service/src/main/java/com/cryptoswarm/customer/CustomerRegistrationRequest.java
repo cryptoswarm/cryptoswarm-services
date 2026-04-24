@@ -1,7 +1,8 @@
 package com.cryptoswarm.customer;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 public record CustomerRegistrationRequest(
         @NotBlank(message = "firstName is required") String firstName,

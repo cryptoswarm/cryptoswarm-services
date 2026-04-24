@@ -5,11 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.GeneratedValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.GeneratedValue;
 
 @Data
 @Builder
